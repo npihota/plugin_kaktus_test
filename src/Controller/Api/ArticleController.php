@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Controller;
+declare(strict_types=1);
+
+
+namespace App\Controller\Api;
+
 
 use App\DTO\ArticleDTO;
 use App\Entity\Article;
 use App\Entity\Author;
-use App\Repository\ArticleRepository;
 use App\Repository\AuthorRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,14 +19,15 @@ use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * @Route("/article")
+ * @Route("/api/article")
+ * Class ArticleController
+ *
+ * @package App\Api\Controller
+ * @author Polvanov Igor <igor@zima.kg>
+ * @copyright 2021 (c) Zima
  */
 class ArticleController extends AbstractController
 {
-    /**
-     * @var ArticleRepository
-     */
-    private $articles;
     /**
      * @var ValidatorInterface
      */
@@ -32,23 +36,26 @@ class ArticleController extends AbstractController
     /**
      * ArticleController constructor.
      *
-     * @param ArticleRepository  $articles
      * @param ValidatorInterface $validator
      */
-    public function __construct(ArticleRepository $articles, ValidatorInterface $validator)
+    public function __construct(ValidatorInterface $validator)
     {
-        $this->articles = $articles;
         $this->validator = $validator;
     }
 
     /**
-     * @Route("/new", name="article_new", methods={"GET","POST"})
-     * @param Request $request
+     * @Route("/new", name="article_new", methods={"POST"})
      *
+     * @param Request          $request
+     * @param AuthorRepository $authorRepository
+     *
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      * @return Response
      */
     public function new(Request $request, AuthorRepository $authorRepository): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
         $serializer = $this->container->get('serializer');
         $articleView = $serializer->deserialize($request->getContent(), ArticleDTO::class, 'json');
 
@@ -90,32 +97,6 @@ class ArticleController extends AbstractController
 
 
         return new JsonResponse(['created'], Response::HTTP_OK);
-    }
-
-
-    /**
-     * @Route("/", name="article_index", methods={"GET"})
-     */
-    public function index(ArticleRepository $articleRepository): Response
-    {
-        return $this->render(
-            'article/index.html.twig',
-            [
-                'articles' => $articleRepository->findAll(),
-            ]
-        );
-    }
-
-    /**
-     * @Route("/show/{id}", name="article_show", methods={"GET"})
-     */
-    public function show($id): Response
-    {
-        $authorArticles = $this->articles->getArticlesByAuthorId($id);
-
-        return $this->render('article/show.html.twig',
-            ['articles' => $authorArticles]
-        );
     }
 
     /**
