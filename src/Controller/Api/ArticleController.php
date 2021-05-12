@@ -55,7 +55,7 @@ class ArticleController extends AbstractController
      */
     public function new(Request $request, AuthorRepository $authorRepository): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $serializer = $this->container->get('serializer');
         $articleView = $serializer->deserialize($request->getContent(), ArticleDTO::class, 'json');
 
