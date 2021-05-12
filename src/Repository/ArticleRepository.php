@@ -20,7 +20,7 @@ class ArticleRepository extends ServiceEntityRepository
         parent::__construct($registry, Article::class);
     }
 
-    public function getArticlesByAuthorId(int $id)
+    public function getArticlesByAuthorId($id)
     {
         return $this->createQueryBuilder('article')
             ->select()

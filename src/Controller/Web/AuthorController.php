@@ -1,42 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
+
 namespace App\Controller\Web;
+
 
 use App\Repository\ArticleRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ArticleController extends AbstractController
+class AuthorController extends AbstractController
 {
     /**
      * @var ArticleRepository
      */
     private $articles;
 
-    /**
-     * ArticleController constructor.
-     *
-     * @param ArticleRepository  $articles
-     */
     public function __construct(ArticleRepository $articles)
     {
         $this->articles = $articles;
     }
 
-
     /**
-     * @Route("/", name="article_index", methods={"GET"})
+     * @Route("/show/{id}", name="article_show", methods={"GET"})
      */
-    public function index(ArticleRepository $articleRepository): Response
+    public function show($id): Response
     {
-        return $this->render(
-            'article/index.html.twig',
-            [
-                'articles' => $articleRepository->findAll(),
-            ]
+        $authorArticles = $this->articles->getArticlesByAuthorId($id);
+
+        return $this->render('article/show.html.twig',
+            ['articles' => $authorArticles]
         );
     }
-
-
 }
