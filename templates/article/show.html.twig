@@ -1,36 +1,46 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Article{% endblock %}
-
 {% block body %}
-    <h1>Article</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-header">
+                            <h1 class="text-center">Article</h1>
+                            <a class="btn btn-danger mb-4" href="{{ path('article_index') }}">back to list</a>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Title</th>
+                                    <th>Created</th>
+                                    <th>Authors</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for value, article in articles %}
+                                    <tr>
+                                        <td>{{ value + 1 }}</td>
+                                        <td>{{ article.title }}</td>
+                                        <td>{{ article.createdAt ? article.createdAt|date('Y-m-d') : '' }}</td>
+                                        <td>
+                                            {% for author in article.authors %}
+                                                <span class="btn btn-dark"> {{ author.name }} </span>
+                                            {% endfor %}
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="4">no records found</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>Created</th>
-            <th>Authors</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for article in articles %}
-            <tr>
-                <td>{{ article.title }}</td>
-                <td>{{ article.createdAt ? article.createdAt|date('Y-m-d') : '' }}</td>
-                <td>
-                    {% for author in article.authors %}
-                        <span> {{ author.name }} </span>
-                    {% endfor %}
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('article_index') }}">back to list</a>
 {% endblock %}
