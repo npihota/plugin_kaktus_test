@@ -1,6 +1,12 @@
 doctrine:
     dbal:
-        # IMPORTANT: DATABASE_URL *must* define the server version
+        driver: 'pdo_pgsql'
+        server_version: '12.2'
+        charset: utf8
+        default_table_options:
+            charset: utf8
+            collate: ~
+        
         url: '%env(resolve:DATABASE_URL)%'
     orm:
         auto_generate_proxy_classes: true
