@@ -1,5 +1,9 @@
 version: '3'
+
 networks:
+    default:
+        external:
+            name: network
     backend:
     
 services:
@@ -12,6 +16,10 @@ services:
             - ./plugin:/app
             - ./docker/development/nginx/default.conf:/etc/nginx/conf.d/default.conf
             - ./logs/nginx:/var/log/nginx/
+        environment:
+            - VIRTUAL_HOST=dev2.zima.kg
+            - LETSENCRYPT_HOST=dev2.zima.kg
+            - LETSENCRYPT_EMAIL=igor@zima.kg
         depends_on:
             - plugin-php-fpm
         networks:
@@ -55,7 +63,7 @@ services:
             - "54321:5432"
         networks:
             - backend
-        
+            
 volumes:
     db-data:
     composer:
